@@ -1,0 +1,45 @@
+# 应用配置
+server:
+  port: 8080 # 应用运行端口
+
+# Spring 相关配置
+spring:
+  application:
+    name: melodymix-backend
+
+  # ✅ 修正：将 servlet.multipart 放在 spring 节点下，与 spring.application 平级
+  servlet:
+    multipart:
+      max-file-size: 10MB  # 单个文件的最大尺寸，您可以根据需要调整
+      max-request-size: 100MB # 单次请求的最大尺寸，包含所有文件和表单数据，通常大于 max-file-size
+
+  # --- 数据库配置 ---
+  datasource:
+    url: jdbc:mysql://localhost:3306/melodymix?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8
+    username: root # 请根据您的MySQL配置修改
+    password: coward # !!! 请修改为您的MySQL密码 !!!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # --- JPA (Hibernate) 配置 ---
+  jpa:
+    hibernate:
+      ddl-auto: update # 警告! Spring Boot会在启动时根据Entity更新数据库模式
+    show-sql: true # 打印Hibernate生成的SQL语句
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect # 指定MySQL 8方言
+
+# ===============================================
+# JWT (JSON Web Token) Configuration
+# ===============================================
+application: # <-- 注意：这个 application 节点是自定义的，不是 Spring Boot 默认的 `spring.application`
+  security:
+    jwt:
+      secret-key: 635266556A586E3272357538782F413F4428472B4B6250645367566B59703373 # 请替换为长且随机的密钥！
+      expiration: 86400000 # Token 过期时间（单位：毫秒）。86400000 毫秒 = 24 小时
+file: # <-- 这个 file 节点也是自定义的，没有和 spring 节点冲突
+  upload:
+    dir:
+      songs: ./uploads/songs # 歌曲文件存储的本地目录
+      covers: ./uploads/covers # 歌曲封面图片存储的本地目录
+    base-url: /uploads # 用于前端访问的URL前缀 (用于构建文件访问URL)
